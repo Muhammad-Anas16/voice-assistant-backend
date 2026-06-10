@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploads (optional but recommended if you don't want to push audio files)
+uploads/
+
+# IDE files
+.vscode/
+.idea/
+
+# Optional npm cache
+.npm/
+
+# Temporary files
+tmp/
+temp/
