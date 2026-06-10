@@ -1,0 +1,21 @@
+{
+  "name": "speech_recognition_backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "muhammad_anas",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "multer": "^2.1.1",
+    "play-sound": "^1.1.6",
+    "socket.io": "^4.8.3"
+  }
+}
