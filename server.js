@@ -56,12 +56,9 @@ import http from "http"
 import { Server } from "socket.io"
 import fs from "fs"
 import PlaySound from "play-sound"
-import transcribeRoute from "./routes/transcribeRoute.js";
 
 const app = express()
 app.use(cors())
-app.use("/api", transcribeRoute)
-
 const server = http.createServer(app)
 
 const io = new Server(server, {
