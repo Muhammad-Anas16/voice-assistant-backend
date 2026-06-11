@@ -50,15 +50,92 @@
 //     console.log("Server running on http://localhost:5000");
 // });
 
+// ****************************************************************
+// ****************************************************************
+// ****************************************************************
+
+// import express from "express"
+// import cors from "cors"
+// import http from "http"
+// import { Server } from "socket.io"
+// import fs from "fs"
+// import PlaySound from "play-sound"
+
+// const app = express()
+// app.use(cors())
+// const server = http.createServer(app)
+
+// const io = new Server(server, {
+//     cors: {
+//         origin: "*"
+//     }
+// })
+
+// const player = PlaySound()
+
+// // --------------------
+// // ensure uploads folder
+// // --------------------
+// if (!fs.existsSync("uploads")) {
+//     fs.mkdirSync("uploads")
+// }
+
+// io.on("connection", (socket) => {
+//     console.log("✅ Client connected:", socket.id)
+
+//     socket.on("audio-chunk", (data) => {
+//         try {
+//             console.log("🎤 Chunk received:", data.chunk?.byteLength)
+
+//             // convert buffer
+//             const buffer = Buffer.from(data.chunk)
+
+//             // always WAV file (as requested)
+//             // const filePath = `uploads/audio-${Date.now()}.wav`
+//             const filePath = `uploads/audio-${Date.now()}.webm`
+
+//             fs.writeFileSync(filePath, buffer)
+
+//             console.log("📁 Saved:", filePath)
+
+//             // PLAY AUDIO
+//             player.play(filePath, (err) => {
+//                 if (err) {
+//                     console.log("❌ Play error:", err)
+//                 } else {
+//                     console.log("🔊 Playing finished")
+//                 }
+//             })
+
+//         } catch (err) {
+//             console.log("Server error:", err.message)
+//         }
+//     })
+
+//     socket.on("disconnect", () => {
+//         console.log("❌ Client disconnected")
+//     })
+// })
+
+// server.listen(5000, () => {
+//     console.log("🚀 Server running on http://localhost:5000")
+// })
+
+// ****************************************************************
+// ****************************************************************
+// ****************************************************************
+
 import express from "express"
 import cors from "cors"
 import http from "http"
 import { Server } from "socket.io"
 import fs from "fs"
-import PlaySound from "play-sound"
+import path from "path"
+import { nodewhisper } from "nodejs-whisper"
 
 const app = express()
 app.use(cors())
+
 const server = http.createServer(app)
 
 const io = new Server(server, {
@@ -67,51 +144,88 @@ const io = new Server(server, {
     }
 })
 
-const player = PlaySound()
-
-// --------------------
-// ensure uploads folder
-// --------------------
 if (!fs.existsSync("uploads")) {
     fs.mkdirSync("uploads")
 }
 
 io.on("connection", (socket) => {
-    console.log("✅ Client connected:", socket.id)
+    // console.log("Client connected:", socket.id)
 
-    socket.on("audio-chunk", (data) => {
+    socket.on("audio-chunk", async (data) => {
         try {
-            console.log("🎤 Chunk received:", data.chunk?.byteLength)
 
-            // convert buffer
             const buffer = Buffer.from(data.chunk)
 
-            // always WAV file (as requested)
-            const filePath = `uploads/audio-${Date.now()}.wav`
+            const filePath = path.join(
+                process.cwd(),
+                "uploads",
+                `audio-${Date.now()}.webm`
+            )
 
             fs.writeFileSync(filePath, buffer)
 
-            console.log("📁 Saved:", filePath)
+            // console.log("Audio saved:", filePath)
 
-            // PLAY AUDIO
-            player.play(filePath, (err) => {
-                if (err) {
-                    console.log("❌ Play error:", err)
-                } else {
-                    console.log("🔊 Playing finished")
+            const result = await nodewhisper(filePath, {
+                modelName: "tiny.en",
+
+                autoDownloadModelName: "tiny.en",
+
+                removeWavFileAfterTranscription: true,
+
+                withCuda: false,
+
+                whisperOptions: {
+                    outputInCsv: false,
+                    outputInJson: false,
+                    outputInJsonFull: false,
+                    outputInLrc: false,
+                    outputInSrt: false,
+                    outputInText: true,
+                    outputInVtt: false,
+                    outputInWords: false,
+
+                    translateToEnglish: false,
+
+                    splitOnWord: true,
+
+                    wordTimestamps: false,
+
+                    noGpu: true
                 }
             })
 
-        } catch (err) {
-            console.log("Server error:", err.message)
+            const cleanText = result
+                .replace(/\[.*?\]/g, "") // remove timestamps
+                .replace(/\r?\n/g, " ")  // remove new lines
+                .replace(/\s+/g, " ")    // remove extra spaces
+                .trim()
+
+            // console.log("Transcription Result:")
+            // console.log(cleanText)
+
+            socket.emit("transcription-result", {
+                success: true,
+                // text: result
+                text: cleanText
+            })
+
+        } catch (error) {
+
+            console.error(error)
+
+            socket.emit("transcription-result", {
+                success: false,
+                error: error.message
+            })
         }
     })
 
     socket.on("disconnect", () => {
-        console.log("❌ Client disconnected")
+        console.log("Client disconnected")
     })
 })
 
 server.listen(5000, () => {
-    console.log("🚀 Server running on http://localhost:5000")
+    console.log("Server running on port 5000")
 })
