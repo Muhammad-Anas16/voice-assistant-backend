@@ -3,3 +3,5 @@ uploads/
 .env
 dist/
 build/
+.trunk
+.vscode
