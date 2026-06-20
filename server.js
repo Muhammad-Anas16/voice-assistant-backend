@@ -5,6 +5,8 @@ import { Server } from "socket.io"
 import fs from "fs"
 import path from "path"
 import { nodewhisper } from "nodejs-whisper"
+import { getAIReply } from "./helperFunction/AIReply.js"
+import { startLlamaServer } from "./helperFunction/startLlama.js"
 
 const app = express()
 app.use(cors())
@@ -22,8 +24,6 @@ if (!fs.existsSync("uploads")) {
 }
 
 io.on("connection", (socket) => {
-    // console.log("Client connected:", socket.id)
-
     socket.on("audio-chunk", async (data) => {
         try {
 
@@ -36,8 +36,6 @@ io.on("connection", (socket) => {
             )
 
             fs.writeFileSync(filePath, buffer)
-
-            // console.log("Audio saved:", filePath)
 
             const result = await nodewhisper(filePath, {
                 modelName: "tiny.en",
@@ -74,13 +72,14 @@ io.on("connection", (socket) => {
                 .replace(/\s+/g, " ")    // remove extra spaces
                 .trim()
 
-            // console.log("Transcription Result:")
-            // console.log(cleanText)
+            console.log("Transcription result:", cleanText)
+
+            const reply = await getAIReply(cleanText)
 
             socket.emit("transcription-result", {
                 success: true,
-                // text: result
-                text: cleanText
+                text: cleanText,
+                reply: reply
             })
 
         } catch (error) {
@@ -101,4 +100,5 @@ io.on("connection", (socket) => {
 
 server.listen(5000, () => {
     console.log("Server running on port 5000")
+    startLlamaServer();
 })
