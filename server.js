@@ -7,6 +7,8 @@ import path from "path"
 import { nodewhisper } from "nodejs-whisper"
 import { getAIReply } from "./helperFunction/AIReply.js"
 import { startLlamaServer } from "./helperFunction/startLlama.js"
+import { buffer } from "stream/consumers"
+import { deleteAudioFiles } from "./helperFunction/deleteAudioFiles.js"
 
 const app = express()
 app.use(cors())
@@ -19,6 +21,8 @@ const io = new Server(server, {
     }
 })
 
+let filePath = "";
+
 if (!fs.existsSync("uploads")) {
     fs.mkdirSync("uploads")
 }
@@ -29,7 +33,7 @@ io.on("connection", (socket) => {
 
             const buffer = Buffer.from(data.chunk)
 
-            const filePath = path.join(
+            filePath = path.join(
                 process.cwd(),
                 "uploads",
                 `audio-${Date.now()}.webm`
@@ -39,13 +43,9 @@ io.on("connection", (socket) => {
 
             const result = await nodewhisper(filePath, {
                 modelName: "tiny.en",
-
                 autoDownloadModelName: "tiny.en",
-
                 removeWavFileAfterTranscription: true,
-
                 withCuda: false,
-
                 whisperOptions: {
                     outputInCsv: false,
                     outputInJson: false,
@@ -75,9 +75,11 @@ io.on("connection", (socket) => {
             console.log("Transcription result:", cleanText)
 
             const reply = await getAIReply(cleanText)
+            // console.log("giving reply using llama", reply);
 
             socket.emit("transcription-result", {
                 success: true,
+                filePathOrNAme: filePath,
                 text: cleanText,
                 reply: reply
             })
@@ -90,6 +92,8 @@ io.on("connection", (socket) => {
                 success: false,
                 error: error.message
             })
+        } finally {
+            // deleteAudioFiles(filePath)
         }
     })
 
@@ -102,3 +106,5 @@ server.listen(5000, () => {
     console.log("Server running on port 5000")
     startLlamaServer();
 })
+
+// C:\\Users\\M - Anas\\Desktop\\express\\uploads\\audio-1782118480940.webm
