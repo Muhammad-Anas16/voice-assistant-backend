@@ -9,9 +9,12 @@ import { getAIReply } from "./helperFunction/AIReply.js"
 import { startLlamaServer } from "./helperFunction/startLlama.js"
 import { buffer } from "stream/consumers"
 import { deleteAudioFiles } from "./helperFunction/deleteAudioFiles.js"
+import socketResponse from "./helperFunction/socketResponse.js"
 
 const app = express()
 app.use(cors())
+app.use(express.json())
+app.use("/api", greetingRoute)
 
 const server = http.createServer(app)
 
@@ -75,25 +78,31 @@ io.on("connection", (socket) => {
             console.log("Transcription result:", cleanText)
 
             const reply = await getAIReply(cleanText)
-            // console.log("giving reply using llama", reply);
 
-            socket.emit("transcription-result", {
-                success: true,
-                filePathOrNAme: filePath,
-                text: cleanText,
-                reply: reply
-            })
+            socket.emit(
+                "transcription-result",
+                socketResponse(
+                    true,
+                    "Response Generated Successfully",
+                    cleanText,
+                    reply,
+                    false,
+                    null
+                )
+            )
 
         } catch (error) {
-
-            console.error(error)
-
-            socket.emit("transcription-result", {
-                success: false,
-                error: error.message
-            })
-        } finally {
-            // deleteAudioFiles(filePath)
+            socket.emit(
+                "transcription-result",
+                socketResponse(
+                    false,
+                    "Didn't get Response",
+                    cleanText || "Can't hear Your Voice",
+                    reply || "Didn't Get any response from AI",
+                    true,
+                    error.message
+                )
+            )
         }
     })
 
@@ -106,5 +115,3 @@ server.listen(5000, () => {
     console.log("Server running on port 5000")
     startLlamaServer();
 })
-
-// C:\\Users\\M - Anas\\Desktop\\express\\uploads\\audio-1782118480940.webm
