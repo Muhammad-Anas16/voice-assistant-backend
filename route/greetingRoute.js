@@ -1,5 +1,8 @@
 import express from "express"
-import responseHandler from "../helperFunction/responseHandler.js"
+import { getAIReply } from "../helperFunction/AIReplyWithLlama.js"
+import AIReplyWithGroq from "../helperFunction/AIReplyWithGroq.js"
+import responseHandler from './../components/responseHandler.js';
+import { startLlamaServer } from "../helperFunction/startLlama.js";
 
 const router = express.Router()
 
@@ -11,24 +14,31 @@ router.post("/greeting", async (req, res) => {
             userName,
             country,
             language,
-            religion
+            religion,
+            mode
         } = req.body
 
         const prompt = `
 Assistant Name: ${assistantName}
 
-User Name: ${userName}
+User Name: ${userName} Country: ${country} Language: Roman ${language} in English spell Religion: ${religion} Introduce yourself briefly and greet the user.
+Do not use markdown.
+Do not use bullet points.
+Respond in a single natural 1 line or 2 lines paragraph.`
 
-Country: ${country}
+        let reply;
 
-Language: ${language}
+        if (mode === "offline") {
+            startLlamaServer()
+        }
 
-Religion: ${religion}
+        if (mode === "offline") {
+            reply = await getAIReply(prompt)
+        } else {
+            reply = await AIReplyWithGroq(prompt)
+        }
 
-Introduce yourself briefly and greet the user.
-`
-
-        // const reply = await getAIReply(prompt)
+        const filterReply = reply.replace(/\r?\n/g, " ").replace(/\s+/g, " ").trim()
 
         return responseHandler(
             res,
@@ -36,7 +46,7 @@ Introduce yourself briefly and greet the user.
             true,
             "Greeting Generated",
             null,
-            reply,
+            filterReply,
             false,
             null
         )

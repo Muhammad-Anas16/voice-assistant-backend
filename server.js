@@ -120,7 +120,7 @@ import express from "express"
 import cors from "cors"
 import http from "http"
 import { Server } from "socket.io"
-// import greetingRoute from "./route/greetingRoute.js"
+import greetingRoute from "./route/greetingRoute.js"
 import offlineChatRoute from "./route/offlineChatRoute.js"
 import onlineChatRoute from "./route/onlineChatRoute.js"
 
@@ -128,8 +128,7 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
-
-// app.use("/api", greetingRoute)
+app.use("/api", greetingRoute)
 
 const server = http.createServer(app)
 
