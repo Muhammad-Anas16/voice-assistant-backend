@@ -4,7 +4,8 @@ const socketResponse = (
     userSay = null,
     AiReply = null,
     error = false,
-    errorMessage = null
+    errorMessage = null,
+    filePath = null
 ) => {
 
     return {

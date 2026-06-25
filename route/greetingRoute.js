@@ -1,5 +1,4 @@
 import express from "express"
-import { getAIReply } from "../helperFunction/AIReply.js"
 import responseHandler from "../helperFunction/responseHandler.js"
 
 const router = express.Router()
@@ -29,7 +28,7 @@ Religion: ${religion}
 Introduce yourself briefly and greet the user.
 `
 
-        const reply = await getAIReply(prompt)
+        // const reply = await getAIReply(prompt)
 
         return responseHandler(
             res,
