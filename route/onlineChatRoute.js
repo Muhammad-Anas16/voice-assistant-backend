@@ -1,10 +1,10 @@
 import fs from "fs"
 import path from "path"
-import speechToText from "../components/speechToText.js"
 import socketResponse from "../components/socketResponse.js"
 import { deleteAudioFiles } from "../components/deleteAudioFiles.js"
 import AIReplyWithGroq from "../helperFunction/AIReplyWithGroq.js"
 import saveAudioFile from "../components/saveAudioFile.js"
+import deepgramSpeechToText from "../components/deepgramOnlineSpeechToText.js"
 
 const onlineChatRoute = (io) => {
 
@@ -18,7 +18,7 @@ const onlineChatRoute = (io) => {
                 // for saving audio files into upload folder
                 filePath = saveAudioFile(data.chunk)
                 // get Clean filer converted ted
-                const cleanText = await speechToText(filePath)
+                const cleanText = await deepgramSpeechToText(filePath)
                 // converted text to AI for getting response
                 const reply = await AIReplyWithGroq(cleanText)
 

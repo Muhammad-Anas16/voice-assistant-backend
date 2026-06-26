@@ -1,11 +1,11 @@
 import fs from "fs"
 import path from "path"
-import speechToText from "../components/speechToText.js"
 import socketResponse from "../components/socketResponse.js"
 import { getAIReply } from "../helperFunction/AIReplyWithLlama.js"
 import { startLlamaServer } from "../helperFunction/startLlama.js"
 import { deleteAudioFiles } from "../components/deleteAudioFiles.js"
 import saveAudioFile from "../components/saveAudioFile.js"
+import speechToText from "../components/nodeWhisperSpeechToText.js"
 
 const offlineChatRoute = (io) => {
 

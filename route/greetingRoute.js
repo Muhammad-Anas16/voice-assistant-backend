@@ -26,7 +26,7 @@ Do not use markdown.
 Do not use bullet points.
 Respond in a single natural 1 line or 2 lines paragraph.`
 
-        let reply;
+            let reply;
 
         if (mode === "offline") {
             startLlamaServer()
