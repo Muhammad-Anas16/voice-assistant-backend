@@ -1,6 +1,6 @@
 import { nodewhisper } from "nodejs-whisper"
 
-const speechToText = async (filePath) => {
+const nodeWhisperSpeechToText = async (filePath) => {
 
     const result = await nodewhisper(filePath, {
         modelName: "tiny.en",
@@ -35,4 +35,4 @@ const speechToText = async (filePath) => {
         .trim()
 }
 
-export default speechToText
+export default nodeWhisperSpeechToText

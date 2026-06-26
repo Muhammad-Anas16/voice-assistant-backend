@@ -2,9 +2,9 @@ import fs from "fs"
 import path from "path"
 import socketResponse from "../components/socketResponse.js"
 import { deleteAudioFiles } from "../components/deleteAudioFiles.js"
-import AIReplyWithGroq from "../helperFunction/AIReplyWithGroq.js"
 import saveAudioFile from "../components/saveAudioFile.js"
 import deepgramSpeechToText from "../components/deepgramOnlineSpeechToText.js"
+import AIReplyWithGroq from "../helperFunction/AIReplyWithGroq.js"
 
 const onlineChatRoute = (io) => {
 
@@ -33,7 +33,8 @@ const onlineChatRoute = (io) => {
                 )
 
                 if (reply) {
-                    setTimeout(() => deleteAudioFiles(filePath), 1000)
+                    // setTimeout(() => deleteAudioFiles(filePath), 1000)
+                    deleteAudioFiles(filePath)
                 }
 
             } catch (error) {

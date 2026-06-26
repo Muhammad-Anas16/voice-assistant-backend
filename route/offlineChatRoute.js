@@ -5,7 +5,7 @@ import { getAIReply } from "../helperFunction/AIReplyWithLlama.js"
 import { startLlamaServer } from "../helperFunction/startLlama.js"
 import { deleteAudioFiles } from "../components/deleteAudioFiles.js"
 import saveAudioFile from "../components/saveAudioFile.js"
-import speechToText from "../components/nodeWhisperSpeechToText.js"
+import nodeWhisperSpeechToText from "../components/nodeWhisperSpeechToText.js"
 
 const offlineChatRoute = (io) => {
 
@@ -21,7 +21,7 @@ const offlineChatRoute = (io) => {
                 // for saving audio files into upload folder
                 filePath = saveAudioFile(data.chunk)
                 // get Clean filer converted ted
-                const cleanText = await speechToText(filePath)
+                const cleanText = await nodeWhisperSpeechToText(filePath)
                 // converted text to AI for getting response
                 const reply = await getAIReply(cleanText)
 
@@ -36,7 +36,8 @@ const offlineChatRoute = (io) => {
                 )
 
                 if (reply) {
-                    setTimeout(() => deleteAudioFiles(filePath), 2000)
+                    // setTimeout(() => deleteAudioFiles(filePath), 1000)
+                    deleteAudioFiles(filePath)
                 }
 
 
