@@ -25,7 +25,8 @@
     "play-sound": "^1.1.6",
     "sharp": "^0.35.2",
     "socket.io": "^4.8.3",
-    "tesseract.js": "^7.0.0"
+    "tesseract.js": "^7.0.0",
+    "tiny-tts": "^5.0.1"
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

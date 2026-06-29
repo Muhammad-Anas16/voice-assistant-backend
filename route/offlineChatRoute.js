@@ -16,8 +16,8 @@ const offlineChatRoute = (io) => {
             let filePath = ""
 
             try {
+                // Llama server starts
                 startLlamaServer()
-
                 // for saving audio files into upload folder
                 filePath = saveAudioFile(data.chunk)
                 // get Clean filer converted ted
@@ -29,7 +29,7 @@ const offlineChatRoute = (io) => {
                     "chat-response",
                     socketResponse(
                         true,
-                        "Offline Response Generated",
+                        "Offline Response Generated using node-Whisper Speech To Text + AI Reply With LLama",
                         cleanText,
                         reply
                     )

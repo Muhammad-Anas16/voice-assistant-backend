@@ -3,6 +3,7 @@ const socketResponse = (
     message,
     userSay = null,
     AiReply = null,
+    audio = null,
     error = false,
     errorMessage = null,
     filePath = null
@@ -13,6 +14,7 @@ const socketResponse = (
         message,
         userSay,
         AiReply,
+        audio,
         error,
         errorMessage
     }

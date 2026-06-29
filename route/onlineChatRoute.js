@@ -5,6 +5,7 @@ import { deleteAudioFiles } from "../components/deleteAudioFiles.js"
 import saveAudioFile from "../components/saveAudioFile.js"
 import deepgramSpeechToText from "../components/deepgramOnlineSpeechToText.js"
 import AIReplyWithGroq from "../helperFunction/AIReplyWithGroq.js"
+import TinyTTSService from "../services/TinyTTSService.js"
 
 const onlineChatRoute = (io) => {
 
@@ -12,7 +13,8 @@ const onlineChatRoute = (io) => {
 
         socket.on("online-chat", async (data) => {
 
-            let filePath = ""
+            let filePath = "";
+            let audio = "";
 
             try {
                 // for saving audio files into upload folder
@@ -21,19 +23,21 @@ const onlineChatRoute = (io) => {
                 const cleanText = await deepgramSpeechToText(filePath)
                 // converted text to AI for getting response
                 const reply = await AIReplyWithGroq(cleanText)
+                // sending audio to Frontend
+                audio = await TinyTTSService(reply);
 
                 socket.emit(
                     "chat-response",
                     socketResponse(
                         true,
-                        "Online Response Generated",
+                        "Online Route",
                         cleanText,
-                        reply
+                        reply,
+                        audio
                     )
                 )
 
-                if (reply) {
-                    // setTimeout(() => deleteAudioFiles(filePath), 1000)
+                if (audio) {
                     deleteAudioFiles(filePath)
                 }
 

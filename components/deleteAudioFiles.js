@@ -11,6 +11,7 @@ export const deleteAudioFiles = (fullPath) => {
 
         const webmFile = path.join(uploadDir, `${baseName}.webm`)
         const txtFile = path.join(uploadDir, `${baseName}.wav.txt`)
+        const audioFile = path.join(uploadDir, `output.wav`)
 
         if (fs.existsSync(webmFile)) {
             fs.unlinkSync(webmFile)
@@ -20,6 +21,11 @@ export const deleteAudioFiles = (fullPath) => {
         if (fs.existsSync(txtFile)) {
             fs.unlinkSync(txtFile)
             console.log("Deleted:", txtFile)
+        }
+
+        if (fs.existsSync(audioFile)) {
+            fs.unlinkSync(audioFile)
+            console.log("Deleted:", audioFile)
         }
 
     } catch (err) {
