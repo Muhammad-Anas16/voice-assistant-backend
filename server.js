@@ -7,7 +7,7 @@ import offlineChatRoute from "./route/offlineChatRoute.js"
 import onlineChatRoute from "./route/onlineChatRoute.js"
 import testRoute from "./route/testRoute.js"
 import dotenv from "dotenv";
-
+import onlineScreenReaderRoute from "./route/onlineScreenReaderRoute.js"
 
 const app = express()
 
@@ -18,15 +18,14 @@ app.use("/api", greetingRoute)
 app.use("/api", testRoute);
 
 const server = http.createServer(app)
-
 const io = new Server(server, {
     cors: {
         origin: "*"
     }
 })
-
 offlineChatRoute(io)
 onlineChatRoute(io)
+onlineScreenReaderRoute(io);
 
 server.listen(5000, () => {
     console.log("Server Running On Port 5000")

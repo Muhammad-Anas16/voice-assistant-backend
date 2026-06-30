@@ -23,6 +23,7 @@
     "nodejs-whisper": "^0.3.0",
     "ollama": "^0.6.3",
     "play-sound": "^1.1.6",
+    "screenshot-desktop": "^1.15.4",
     "sharp": "^0.35.2",
     "socket.io": "^4.8.3",
     "tesseract.js": "^7.0.0",

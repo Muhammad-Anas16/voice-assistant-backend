@@ -1,9 +1,9 @@
 import sharp from "sharp";
-import worker from "../config/tesseractWorker";
+import worker from "../config/tesseractWorker.js";
 
 const OCRService = async (filePath) => {
-
     try {
+        console.log("OCR Started...");
 
         const processedImage = await sharp(filePath)
             .grayscale()
@@ -12,18 +12,16 @@ const OCRService = async (filePath) => {
             .png()
             .toBuffer();
 
-        const {
-            data: { text }
-        } = await worker.recognize(processedImage);
+        const result = await worker.recognize(processedImage);
 
-        return text.trim();
+        console.log("OCR Finished");
 
+        return result.data.text.trim();
     } catch (error) {
+        console.error("OCR Error:", error);
 
         throw new Error(`OCR Failed: ${error.message}`);
-
     }
-
 };
 
 export default OCRService;
